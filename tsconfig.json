@@ -33,7 +33,7 @@
     "**/*.ts",
     "**/*.tsx",
     "**/*.vue"
-  ],
+, "demos/src/Experiments/BlockNote/Vue/extension/DragHandle.js"  ],
   "exclude": [
     "**/node_modules",
     "**/dist"
