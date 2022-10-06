@@ -1,12 +1,13 @@
 import { Extension } from '@tiptap/core'
 import { NodeSelection, Plugin } from 'prosemirror-state'
-import { __serializeForClipboard as serializeForClipboard } from 'prosemirror-view'
+// @ts-ignore
+import { __serializeForClipboard as serializeForClipboard, EditorView } from 'prosemirror-view'
 
-function removeNode(node) {
-  node.parentNode.removeChild(node)
+function removeNode(node: HTMLElement) {
+  node.parentNode?.removeChild(node)
 }
 
-function absoluteRect(node) {
+function absoluteRect(node: HTMLElement) {
   const data = node.getBoundingClientRect()
 
   return {
@@ -18,31 +19,37 @@ function absoluteRect(node) {
 
 export default Extension.create({
   addProseMirrorPlugins() {
-    function blockPosAtCoords(coords, view) {
+    function blockPosAtCoords(coords: { left: number, top: number}, view: EditorView) {
       const pos = view.posAtCoords(coords)
-      let node = view.domAtPos(pos.pos)
 
-      node = node.node
+      if (!pos) {
+        return null
+      }
+
+      let { node } = view.domAtPos(pos.pos)
 
       while (node && node.parentNode) {
-        if (node.parentNode?.classList?.contains('ProseMirror')) { // todo
+        const current = node.parentNode as HTMLElement
+
+        if (current?.classList?.contains('ProseMirror')) { // todo
           break
         }
 
-        node = node.parentNode
+        node = current
       }
 
       if (node && node.nodeType === 1) {
-        const desc = view.docView.nearestDesc(node, true)
+        const docView = (view as any).docView
+        const desc = docView.nearestDesc(node, true)
 
-        if (!(!desc || desc === view.docView)) {
+        if (!(!desc || desc === docView)) {
           return desc.posBefore
         }
       }
       return null
     }
 
-    function dragStart(e, view) {
+    function dragStart(e: any, view: EditorView) {
 
       Reflect.set(view, 'composing', true)
 
@@ -75,7 +82,7 @@ export default Extension.create({
       }
     }
 
-    let dropElement
+    let dropElement: HTMLElement | null
     const WIDTH = 20
 
     return [
@@ -83,7 +90,7 @@ export default Extension.create({
         view(editorView) {
           const element = document.createElement('div')
 
-          element.draggable = 'true'
+          element.draggable = true
           element.classList.add('global-drag-handle')
           element.addEventListener('dragstart', e => dragStart(e, editorView))
           dropElement = element
@@ -93,7 +100,9 @@ export default Extension.create({
             // update(view, prevState) {
             // },
             destroy() {
-              removeNode(dropElement)
+              if (dropElement) {
+                removeNode(dropElement)
+              }
               dropElement = null
             },
           }
@@ -126,31 +135,38 @@ export default Extension.create({
               }
               const pos = view.posAtCoords(coords)
 
-              if (pos) {
-                let node = view.domAtPos(pos?.pos)
+              if (!pos) {
+                return false
+              }
 
-                if (node) {
-                  node = node.node
-                  while (node && node.parentNode) {
-                    if (node.parentNode?.classList?.contains('ProseMirror')) { // todo
-                      break
-                    }
-                    node = node.parentNode
+              let node = view.domAtPos(pos?.pos).node
+
+              if (node) {
+
+                while (node && node.parentNode) {
+                  const current = node.parentNode as HTMLElement
+
+                  if (current.classList?.contains('ProseMirror')) { // todo
+                    break
                   }
 
-                  if (node instanceof Element) {
-                    const cstyle = window.getComputedStyle(node)
-                    const lineHeight = parseInt(cstyle.lineHeight, 10)
-                    // const top = parseInt(cstyle.marginTop, 10) + parseInt(cstyle.paddingTop, 10)
-                    const top = 0
-                    const rect = absoluteRect(node)
-                    const win = node.ownerDocument.defaultView
+                  node = current
+                }
 
-                    rect.top += win.pageYOffset + ((lineHeight - 24) / 2) + top
-                    rect.left += win.pageXOffset
-                    rect.width = `${WIDTH}px`
+                if (node instanceof HTMLElement) {
+                  const cstyle = window.getComputedStyle(node)
+                  const lineHeight = parseInt(cstyle.lineHeight, 10)
+                  // const top = parseInt(cstyle.marginTop, 10) + parseInt(cstyle.paddingTop, 10)
+                  const top = 0
+                  const rect = absoluteRect(node)
+                  const win = node.ownerDocument.defaultView || window
 
-                    dropElement.style.left = `${-WIDTH + rect.left}px`
+                  rect.top += win.pageYOffset + ((lineHeight - 24) / 2) + top
+                  rect.left += win.pageXOffset
+                  rect.width = WIDTH
+
+                  if (dropElement) {
+                    dropElement.style.left = `${-rect.width + rect.left}px`
                     dropElement.style.top = `${rect.top}px`
                   }
                 }

@@ -17,6 +17,8 @@
 
 <script>
 import Collaboration from '@tiptap/extension-collaboration'
+import Gapcursor from '@tiptap/extension-gapcursor'
+import HardBreak from '@tiptap/extension-hard-break'
 import Paragraph from '@tiptap/extension-paragraph'
 import Text from '@tiptap/extension-text'
 import { Editor, EditorContent } from '@tiptap/vue-3'
@@ -28,7 +30,7 @@ import {
   BlockDescription,
 } from './extension/BlockNodes'
 import { Document } from './extension/Document'
-import DragHandle from './extension/DragHandle.js'
+import DragHandle from './extension/DragHandle'
 import { Dropcursor } from './extension/Dropcursor'
 
 export default {
@@ -50,6 +52,8 @@ export default {
       extensions: [
         Document,
         Paragraph,
+        HardBreak,
+        Gapcursor,
         Dropcursor.configure({
           color: 'red',
           width: 2,
@@ -92,6 +96,8 @@ export default {
       extensions: [
         Document,
         Paragraph,
+        HardBreak,
+        Gapcursor,
         Dropcursor.configure({
           color: 'red',
           width: 2,
@@ -153,4 +159,5 @@ export default {
 .ProseMirror-selectednode {
   background-color: #dddddd;
 }
+
 </style>
