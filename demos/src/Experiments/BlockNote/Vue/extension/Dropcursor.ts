@@ -82,6 +82,8 @@ class DropCursorView {
 
     let rect
 
+    let height = 0
+
     if (!$pos.parent.inlineContent) {
       const before = $pos.nodeBefore
       const after = $pos.nodeAfter
@@ -94,6 +96,8 @@ class DropCursorView {
         if (before && after) {
           top = (top + (this.editorView.nodeDOM(this.cursorPos) as HTMLElement).getBoundingClientRect().top) / 2
         }
+
+        height = nodeRect.height
 
         rect = {
           left: nodeRect.left,
@@ -155,14 +159,13 @@ class DropCursorView {
       const { x } = event
 
       if (rect.right - 100 < x) {
-        const node = this.editorView.nodeDOM($pos.pos) as HTMLElement
+        const scrollTop = (document.scrollingElement && document.scrollingElement.scrollTop) || 0
 
-        const nodeRect = (node && node.getBoundingClientRect()) || { top: 0, height: 0 }
-
+        // TODO: 计算高度
         this.element.style.left = `${rect.right}px`
-        this.element.style.top = `${(nodeRect.top + parentTop) || (rect.top + parentTop)}px`
+        this.element.style.top = `${rect.top - height + scrollTop - 10}px`
         this.element.style.width = `${this.width}px`
-        this.element.style.height = `${nodeRect.height || (rect.bottom - rect.top)}px`
+        this.element.style.height = `${height}px`
       }
     }
   }
