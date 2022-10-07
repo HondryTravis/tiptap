@@ -56,7 +56,7 @@ class DropCursorView {
     }
   }
 
-  setCursor(pos: number | null) {
+  setCursor(pos: number | null, event?: any) {
     if (pos === this.cursorPos) {
       return
     }
@@ -66,11 +66,11 @@ class DropCursorView {
       this.element?.remove()
       this.element = null
     } else {
-      this.updateOverlay()
+      this.updateOverlay(event)
     }
   }
 
-  updateOverlay() {
+  updateOverlay(event?: any) {
 
     if (!this.cursorPos) {
       this.element?.remove()
@@ -150,6 +150,21 @@ class DropCursorView {
     this.element.style.top = `${(rect.top - parentTop)}px`
     this.element.style.width = `${(rect.right - rect.left)}px`
     this.element.style.height = `${(rect.bottom - rect.top)}px`
+
+    if (event) {
+      const { x } = event
+
+      if (rect.right - 200 < x) {
+        const node = this.editorView.nodeDOM($pos.pos) as HTMLElement
+
+        const nodeRect = (node && node.getBoundingClientRect()) || { top: 0, height: 0 }
+
+        this.element.style.left = `${rect.right}px`
+        this.element.style.top = `${nodeRect.top || (rect.top + parentTop)}px`
+        this.element.style.width = `${this.width}px`
+        this.element.style.height = `${nodeRect.height || (rect.bottom - rect.top)}px`
+      }
+    }
   }
 
   scheduleRemoval(timeout: number) {
@@ -173,11 +188,13 @@ class DropCursorView {
 
       if (this.editorView.dragging && this.editorView.dragging.slice) {
         target = dropPoint(this.editorView.state.doc, target, this.editorView.dragging.slice)
-        if (target == null) {
-          return this.setCursor(null)
-        }
       }
-      this.setCursor(target)
+
+      if (target == null) {
+        return this.setCursor(null, event)
+      }
+
+      this.setCursor(target, event)
       this.scheduleRemoval(5000)
     }
   }

@@ -2,6 +2,17 @@
   <div class="blockNote">
     <h1> Block Note </h1>
     <div v-if="editor">
+      <button @click="editor.chain().focus().toggleBold().run()" :class="{ 'is-active': editor.isActive('bold') }">
+        bold
+      </button>
+      <button @click="editor.chain().focus().toggleItalic().run()" :class="{ 'is-active': editor.isActive('italic') }">
+        italic
+      </button>
+      <button @click="editor.chain().focus().toggleStrike().run()" :class="{ 'is-active': editor.isActive('strike') }">
+        strike
+      </button>
+    </div>
+    <div v-if="editor">
       <h2>
         编辑器 1
       </h2>
@@ -16,14 +27,24 @@
 </template>
 
 <script>
+import Bold from '@tiptap/extension-bold'
+import BulletList from '@tiptap/extension-bullet-list'
 import Collaboration from '@tiptap/extension-collaboration'
 import Gapcursor from '@tiptap/extension-gapcursor'
 import HardBreak from '@tiptap/extension-hard-break'
+import Italic from '@tiptap/extension-italic'
+import ListItem from '@tiptap/extension-list-item'
 import Paragraph from '@tiptap/extension-paragraph'
+import Strike from '@tiptap/extension-strike'
 import Text from '@tiptap/extension-text'
 import { Editor, EditorContent } from '@tiptap/vue-3'
 import * as Y from 'yjs'
 
+import {
+  BlockLayout,
+  BlockLayoutContainer,
+  BlockLayoutContent,
+} from './extension/BlockLayout'
 import {
   BlockContainer,
   BlockContent,
@@ -60,30 +81,59 @@ export default {
           class: undefined,
         }),
         Text,
+        ListItem,
+        BulletList,
         BlockContent,
         BlockContainer,
         BlockDescription,
+        BlockLayout,
+        BlockLayoutContainer,
+        BlockLayoutContent,
+        Bold,
+        Italic,
+        Strike,
         DragHandle,
         Collaboration.configure({
           document: ydoc,
         }),
       ],
       content: `
-        <p>发的还是机卡师傅阿卡设计费阿萨德爱迪生</p>
-        <p>发的还是机卡师傅阿卡设计费阿萨德爱迪生</p>
-        <p>发的还是机卡师傅阿卡设计费阿萨德爱迪生</p>
-        <p>发的还是机卡师傅阿卡设计费阿萨德爱迪生</p>
+        <p>发的还是机卡师傅阿卡设计费阿萨德爱迪生1</p>
+        <p>发的还是机卡师傅阿卡设计费阿萨德爱迪生2</p>
+        <div data-description="block_layout">
+          <div data-description="block_layout_container">
+            <div data-description="block_layout_content">
+              <p>我是布局文本块 1</p>
+            </div>
+            <div data-description="block_layout_content">
+              <p>我是布局文本块 2</p>
+            </div>
+          </div>
+        </div>
+        <p>发的还是机卡师傅阿卡设计费阿萨德爱迪生3</p>
+        <p>发的还是机卡师傅阿卡设计费阿萨德爱迪生4</p>
+        <ul>
+          <li>烦啥时刻久啊说法的1</li>
+          <li>烦啥时刻久啊说法的2</li>
+          <li>烦啥时刻久啊说法的3</li>
+          <li>烦啥时刻久啊说法的4</li>
+        </ul>
+        <p>发的还是机卡师傅阿卡设计费阿萨德爱迪生1</p>
+        <p>发的还是机卡师傅阿卡设计费阿萨德爱迪生2</p>
+
+        <p>发的还是机卡师傅阿卡设计费阿萨德爱迪生3</p>
+        <p>发的还是机卡师傅阿卡设计费阿萨德爱迪生4</p>
         <div data-description='block_description'>
           <div data-description='block_container'>
             <div data-description='block_content'>
-              <p>测试的文本块测试的文本块测试的文本块测试的文本块1111</p>
+              <p>[编辑器块文本]: 测试的文本块测试的文本块测试的文本块测试的文本块1111</p>
             </div>
           </div>
         </div>
         <div data-description='block_description'>
           <div data-description='block_container'>
             <div data-description='block_content'>
-              <p>测试的文本块测试的文本块测试的文本块测试的文本块22222</p>
+              <p>[编辑器块文本]: 测试的文本块测试的文本块测试的文本块测试的文本块22222</p>
             </div>
           </div>
         </div>
@@ -104,10 +154,18 @@ export default {
           class: undefined,
         }),
         Text,
+        ListItem,
+        BulletList,
         BlockContent,
         BlockContainer,
         BlockDescription,
+        BlockLayout,
+        BlockLayoutContainer,
+        BlockLayoutContent,
         DragHandle,
+        Bold,
+        Italic,
+        Strike,
         Collaboration.configure({
           document: ydoc,
         }),
@@ -158,6 +216,22 @@ export default {
 
 .ProseMirror-selectednode {
   background-color: #dddddd;
+}
+
+div[data-description='block_layout_container'] {
+  display: flex;
+
+  & > div[data-description='block_layout_content'] {
+    max-width: 50%;
+    margin: 0 10px;
+    padding: 10px;
+    flex: 1;
+
+    &:hover {
+      background: #dddddd;
+      border-radius: 5px;
+    }
+  }
 }
 
 </style>

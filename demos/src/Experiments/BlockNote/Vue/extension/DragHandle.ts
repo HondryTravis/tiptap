@@ -109,6 +109,7 @@ export default Extension.create({
         },
         props: {
           handleDrop(view, event, slice, moved) {
+            console.warn(moved, slice, event)
             if (moved) {
               // setTimeout(() => {
               //   console.log('remove selection')
