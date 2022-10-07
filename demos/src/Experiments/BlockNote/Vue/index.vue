@@ -226,11 +226,11 @@ div[data-description='block_layout_container'] {
     margin: 0 10px;
     padding: 10px;
     flex: 1;
+  }
 
-    &:hover {
-      background: #dddddd;
-      border-radius: 5px;
-    }
+  &:hover div[data-description='block_layout_content']{
+    background: #dddddd;
+    border-radius: 5px;
   }
 }
 

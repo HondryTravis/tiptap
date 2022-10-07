@@ -51,7 +51,7 @@ export const BlockLayoutContent = Node.create({
   isolating: true,
   group: 'block',
 
-  content: 'paragraph block+',
+  content: 'block+',
   blockRole: 'block_content',
   parseHTML() {
     return [
