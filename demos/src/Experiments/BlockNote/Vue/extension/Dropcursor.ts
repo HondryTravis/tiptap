@@ -154,13 +154,13 @@ class DropCursorView {
     if (event) {
       const { x } = event
 
-      if (rect.right - 200 < x) {
+      if (rect.right - 100 < x) {
         const node = this.editorView.nodeDOM($pos.pos) as HTMLElement
 
         const nodeRect = (node && node.getBoundingClientRect()) || { top: 0, height: 0 }
 
         this.element.style.left = `${rect.right}px`
-        this.element.style.top = `${nodeRect.top || (rect.top + parentTop)}px`
+        this.element.style.top = `${(nodeRect.top + parentTop) || (rect.top + parentTop)}px`
         this.element.style.width = `${this.width}px`
         this.element.style.height = `${nodeRect.height || (rect.bottom - rect.top)}px`
       }

@@ -12,16 +12,20 @@
         strike
       </button>
     </div>
-    <div v-if="editor">
-      <h2>
-        编辑器 1
-      </h2>
-      <editor-content class="editor-1" :editor="editor" />
+    <div class="demoEditor" v-if="editor">
+      <div>
+        <h2>
+          编辑器 1
+        </h2>
+        <editor-content class="editor-1" :editor="editor" />
+      </div>
 
-      <h2>
-        编辑器 2
-      </h2>
-      <editor-content class="editor-2" :editor="anotherEditor" />
+      <div>
+        <h2>
+          编辑器 2
+        </h2>
+        <editor-content class="editor-2" :editor="anotherEditor" />
+      </div>
     </div>
   </div>
 </template>
@@ -231,6 +235,17 @@ div[data-description='block_layout_container'] {
   &:hover div[data-description='block_layout_content']{
     background: #dddddd;
     border-radius: 5px;
+  }
+}
+
+.demoEditor {
+  display: flex;
+
+  & > div {
+    margin: 10px;
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid black;
   }
 }
 

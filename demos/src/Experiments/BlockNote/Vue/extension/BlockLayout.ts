@@ -26,7 +26,7 @@ export const BlockLayout = Node.create({
 export const BlockLayoutContainer = Node.create({
   name: 'block_layout_container',
   isolating: true,
-  group: 'block',
+  group: 'block_layout',
 
   content: 'block_layout_content+',
   blockRole: 'block_layout_container',
@@ -49,7 +49,7 @@ export const BlockLayoutContainer = Node.create({
 export const BlockLayoutContent = Node.create({
   name: 'block_layout_content',
   isolating: true,
-  group: 'block',
+  group: 'block_layout_container',
 
   content: 'block+',
   blockRole: 'block_content',
