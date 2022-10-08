@@ -1,4 +1,5 @@
 import { Node } from '@tiptap/core'
+import { TextSelection } from 'prosemirror-state'
 
 function isBlockNode(sel: any) {
   const layout = ['block_description']
@@ -64,6 +65,29 @@ export const BlockDescription = Node.create({
 
           upgrade = true
 
+        }
+
+        if (upgrade) {
+          return upgrade
+        }
+
+        return false
+      },
+
+      'Mod-a': () => {
+        const { state, view } = this.editor
+        const { selection } = state
+
+        const hasBlock = isBlockNode(selection)
+        const start = selection.$from.before(1)
+
+        let upgrade = false
+
+        if (hasBlock) {
+          upgrade = true
+          const textSel = TextSelection.create(state.tr.doc, start, start + hasBlock.nodeSize)
+
+          view.dispatch(state.tr.setSelection(textSel))
         }
 
         if (upgrade) {
