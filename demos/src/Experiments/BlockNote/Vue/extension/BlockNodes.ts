@@ -38,13 +38,24 @@ export const BlockDescription = Node.create({
   addKeyboardShortcuts() {
     return {
       Enter: () => {
-        const { state } = this.editor
+        const { state, view } = this.editor
         const { selection } = state
 
         const hasBlock = isBlockNode(selection)
 
+        const start = selection.$from.before(1)
+
         if (hasBlock) {
-          this.editor.commands.splitBlock()
+          const nextPos = start + hasBlock.nodeSize
+
+          const node = this.editor.schema.nodes.block_description.createAndFill()
+
+          if (node) {
+            view.dispatch(state.tr.insert(nextPos, node))
+            const textSel = TextSelection.create(state.tr.doc, nextPos)
+
+            view.dispatch(state.tr.setSelection(textSel))
+          }
           return true
         }
 

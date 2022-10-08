@@ -38,7 +38,6 @@ import Gapcursor from '@tiptap/extension-gapcursor'
 import HardBreak from '@tiptap/extension-hard-break'
 import Italic from '@tiptap/extension-italic'
 import ListItem from '@tiptap/extension-list-item'
-import Paragraph from '@tiptap/extension-paragraph'
 import Strike from '@tiptap/extension-strike'
 import Text from '@tiptap/extension-text'
 import { Editor, EditorContent } from '@tiptap/vue-3'
@@ -57,6 +56,7 @@ import {
 import { Document } from './extension/Document'
 import DragHandle from './extension/DragHandle'
 import { Dropcursor } from './extension/Dropcursor'
+import { Paragraph } from './extension/Paragraph'
 
 export default {
   components: {
@@ -103,6 +103,20 @@ export default {
       ],
       content: `
         <p>发的还是机卡师傅阿卡设计费阿萨德爱迪生1</p>
+        <div data-description='block_description'>
+          <div data-description='block_container'>
+            <div data-description='block_content'>
+              <p>[编辑器块文本]: 测试的文本块测试的文本块测试的文本块测试的文本块1111</p>
+            </div>
+          </div>
+        </div>
+        <div data-description='block_description'>
+          <div data-description='block_container'>
+            <div data-description='block_content'>
+              <p>[编辑器块文本]: 测试的文本块测试的文本块测试的文本块测试的文本块22222</p>
+            </div>
+          </div>
+        </div>
         <p>发的还是机卡师傅阿卡设计费阿萨德爱迪生2</p>
         <div data-description="block_layout">
           <div data-description="block_layout_container">
@@ -127,20 +141,6 @@ export default {
 
         <p>发的还是机卡师傅阿卡设计费阿萨德爱迪生3</p>
         <p>发的还是机卡师傅阿卡设计费阿萨德爱迪生4</p>
-        <div data-description='block_description'>
-          <div data-description='block_container'>
-            <div data-description='block_content'>
-              <p>[编辑器块文本]: 测试的文本块测试的文本块测试的文本块测试的文本块1111</p>
-            </div>
-          </div>
-        </div>
-        <div data-description='block_description'>
-          <div data-description='block_container'>
-            <div data-description='block_content'>
-              <p>[编辑器块文本]: 测试的文本块测试的文本块测试的文本块测试的文本块22222</p>
-            </div>
-          </div>
-        </div>
       `,
     })
 
