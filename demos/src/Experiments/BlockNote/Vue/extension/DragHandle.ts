@@ -18,6 +18,14 @@ function absoluteRect(node: HTMLElement) {
 }
 
 export default Extension.create({
+  name: 'dragMenu',
+
+  addStorage() {
+    return {
+      canDrop: true,
+    }
+  },
+
   addProseMirrorPlugins() {
     function blockPosAtCoords(coords: { left: number, top: number}, view: EditorView) {
       const pos = view.posAtCoords(coords)
@@ -85,6 +93,8 @@ export default Extension.create({
     let dropElement: HTMLElement | null
     const WIDTH = 20
 
+    const editor = this.editor
+
     return [
       new Plugin({
         view(editorView) {
@@ -110,6 +120,9 @@ export default Extension.create({
         props: {
           handleDrop(view, event, slice, moved) {
             console.warn(moved, slice, event)
+            if (!editor.storage.dragMenu.canDrop) {
+              return true
+            }
             if (moved) {
               // setTimeout(() => {
               //   console.log('remove selection')

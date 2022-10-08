@@ -29,6 +29,8 @@ class DropCursorView {
 
   handlers: {name: string, handler: (event: Event) => void}[]
 
+  editor: any
+
   constructor(readonly editorView: EditorView, options: DropCursorOptions) {
     this.width = options.width || 1
     this.color = options.color || 'black'
@@ -158,14 +160,30 @@ class DropCursorView {
     if (event) {
       const { x } = event
 
+      if (event.dataTransfer) {
+        event.dataTransfer.dropEffect = 'none'
+      }
+
+      const editor = (this.editorView.dom as any).editor
+
+      let canDrop = true
+
       if (rect.right - 100 < x) {
         const scrollTop = (document.scrollingElement && document.scrollingElement.scrollTop) || 0
 
+        canDrop = false
+
         // TODO: 计算高度
         this.element.style.left = `${rect.right}px`
-        this.element.style.top = `${rect.top - height + scrollTop - 10}px`
+        this.element.style.top = `${rect.top - height + scrollTop - 8}px`
         this.element.style.width = `${this.width}px`
         this.element.style.height = `${height}px`
+      } else {
+        canDrop = true
+      }
+
+      if (editor) {
+        editor.storage.dragMenu.canDrop = canDrop
       }
     }
   }
@@ -178,6 +196,10 @@ class DropCursorView {
   dragover(event: DragEvent) {
     if (!this.editorView.editable) {
       return
+    }
+
+    if (event.dataTransfer) {
+      event.dataTransfer.dropEffect = 'move'
     }
 
     const pos = this.editorView.posAtCoords({ left: event.clientX, top: event.clientY })

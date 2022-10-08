@@ -1,5 +1,37 @@
 import { Node } from '@tiptap/core'
 
+function isBlockLayout(sel: any) {
+  const layout = ['block_layout_content', 'block_layout_container', 'block_layout']
+  let { depth } = sel.$from
+
+  while (depth) {
+    const node = sel.$from.node(depth)
+
+    if (layout.includes(node.type.name)) {
+      return true
+    }
+
+    depth -= 1
+  }
+  return false
+}
+
+function getBlockLayoutRoot(sel: any) {
+  const layout = ['block_layout']
+  let { depth } = sel.$from
+
+  while (depth) {
+    const node = sel.$from.node(depth)
+
+    if (layout.includes(node.type.name)) {
+      return node
+    }
+
+    depth -= 1
+  }
+  return null
+}
+
 export const BlockLayout = Node.create({
   name: 'block_layout',
   isolating: true,
@@ -66,5 +98,29 @@ export const BlockLayoutContent = Node.create({
     }
 
     return ['div', { ...presets }, 0]
+  },
+
+  addKeyboardShortcuts() {
+    return {
+      Backspace: () => {
+        const { state, view } = this.editor
+        const { selection } = state
+
+        if (isBlockLayout(selection)) {
+
+          const root = getBlockLayoutRoot(selection)
+
+          if (root && !root.textContent.length) {
+            const start = selection.$from.before(1)
+
+            view.dispatch(state.tr.deleteRange(start, start + root.nodeSize))
+            return true
+          }
+
+        }
+
+        return false
+      },
+    }
   },
 })

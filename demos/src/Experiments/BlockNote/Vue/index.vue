@@ -226,7 +226,6 @@ div[data-description='block_layout_container'] {
   display: flex;
 
   & > div[data-description='block_layout_content'] {
-    max-width: 50%;
     margin: 0 10px;
     padding: 10px;
     flex: 1;
