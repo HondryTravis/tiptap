@@ -1,5 +1,21 @@
 import { Node } from '@tiptap/core'
 
+function isBlockNode(sel: any) {
+  const layout = ['block_description']
+  let { depth } = sel.$from
+
+  while (depth) {
+    const node = sel.$from.node(depth)
+
+    if (layout.includes(node.type.name)) {
+      return node
+    }
+
+    depth -= 1
+  }
+  return false
+}
+
 export const BlockDescription = Node.create({
   name: 'block_description',
   isolating: true,
@@ -21,8 +37,38 @@ export const BlockDescription = Node.create({
   addKeyboardShortcuts() {
     return {
       Enter: () => {
-        // const { state, view } = this.editor
-        // const { selection } = state
+        const { state } = this.editor
+        const { selection } = state
+
+        const hasBlock = isBlockNode(selection)
+
+        if (hasBlock) {
+          this.editor.commands.splitBlock()
+          return true
+        }
+
+        return false
+      },
+
+      Backspace: () => {
+        const { state, view } = this.editor
+        const { selection } = state
+
+        const hasBlock = isBlockNode(selection)
+        const start = selection.$from.before(1)
+
+        let upgrade = false
+
+        if (hasBlock && !hasBlock.textContent.length) {
+          view.dispatch(state.tr.deleteRange(start, start + hasBlock.nodeSize))
+
+          upgrade = true
+
+        }
+
+        if (upgrade) {
+          return upgrade
+        }
 
         return false
       },
