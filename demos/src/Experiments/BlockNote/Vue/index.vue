@@ -245,6 +245,7 @@ div[data-description='block_layout_container'] {
     padding: 5px;
     border-radius: 5px;
     border: 1px solid black;
+    min-width: 50%;
   }
 }
 

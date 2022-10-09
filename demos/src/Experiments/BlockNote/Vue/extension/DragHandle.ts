@@ -1,4 +1,5 @@
 import { Extension } from '@tiptap/core'
+import { Fragment, Node as ProsemirrorNode } from 'prosemirror-model'
 import { NodeSelection, Plugin } from 'prosemirror-state'
 // @ts-ignore
 import { __serializeForClipboard as serializeForClipboard, EditorView } from 'prosemirror-view'
@@ -22,7 +23,7 @@ export default Extension.create({
 
   addStorage() {
     return {
-      canDrop: true,
+      dropState: 'drop',
     }
   },
 
@@ -119,15 +120,48 @@ export default Extension.create({
         },
         props: {
           handleDrop(view, event, slice, moved) {
-            console.warn(moved, slice, event)
-            if (!editor.storage.dragMenu.canDrop) {
+            if (editor.storage.dragMenu.dropState === 'replace') {
+              const { x, y } = event
+
+              const postion = view.posAtCoords({ left: x, top: y })
+
+              if (postion) {
+                const targetSlice = view.state.doc.slice(postion?.inside || 0, postion.pos)
+
+                const combineTarget = [targetSlice.content, slice.content]
+
+                const nodes = combineTarget.map(frag => {
+                  let innerFrag = Fragment.empty
+
+                  innerFrag = innerFrag.append(frag)
+
+                  const layoutContent = editor.schema.nodes.block_layout_content.create(undefined, innerFrag) as ProsemirrorNode
+
+                  return layoutContent
+                })
+
+                const layoutContainer = editor.schema.nodes.block_layout_container.create(undefined, nodes) as ProsemirrorNode
+                const layout = editor.schema.nodes.block_layout.create(undefined, layoutContainer) as ProsemirrorNode
+
+                if (moved) {
+                  setTimeout(() => {
+                    // @ts-ignore
+                    console.log('remove selection')
+
+                    view.dispatch(view.state.tr.replaceRangeWith(postion?.inside || 0, postion.pos, layout))
+                    view.dispatch(view.state.tr.deleteSelection())
+                  }, 50)
+                }
+              }
+
+              // console.error(postion, node, view.state.selection.$to.pos)
+              // if (moved) {
+              //   setTimeout(() => {
+              //     console.log('remove selection')
+              //     view.dispatch(view.state.tr.deleteSelection())
+              //   }, 50)
+              // }
               return true
-            }
-            if (moved) {
-              // setTimeout(() => {
-              //   console.log('remove selection')
-              //   view.dispatch(view.state.tr.deleteSelection())
-              // }, 50)
             }
           },
           // handlePaste() {

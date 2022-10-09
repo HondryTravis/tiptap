@@ -166,12 +166,12 @@ class DropCursorView {
 
       const editor = (this.editorView.dom as any).editor
 
-      let canDrop = true
+      let dropState = 'drop'
 
       if (rect.right - 100 < x) {
         const scrollTop = (document.scrollingElement && document.scrollingElement.scrollTop) || 0
 
-        canDrop = false
+        dropState = 'replace'
 
         // TODO: 计算高度
         this.element.style.left = `${rect.right}px`
@@ -179,11 +179,11 @@ class DropCursorView {
         this.element.style.width = `${this.width}px`
         this.element.style.height = `${height}px`
       } else {
-        canDrop = true
+        dropState = 'drop'
       }
 
       if (editor) {
-        editor.storage.dragMenu.canDrop = canDrop
+        editor.storage.dragMenu.dropState = dropState
       }
     }
   }
