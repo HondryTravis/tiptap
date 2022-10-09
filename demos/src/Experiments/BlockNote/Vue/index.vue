@@ -33,7 +33,6 @@
 <script>
 import Bold from '@tiptap/extension-bold'
 import BulletList from '@tiptap/extension-bullet-list'
-import Collaboration from '@tiptap/extension-collaboration'
 import Gapcursor from '@tiptap/extension-gapcursor'
 import HardBreak from '@tiptap/extension-hard-break'
 import Italic from '@tiptap/extension-italic'
@@ -53,6 +52,7 @@ import {
   BlockContent,
   BlockDescription,
 } from './extension/BlockNodes'
+import { Collaboration } from './extension/Collaboration'
 import { Document } from './extension/Document'
 import DragHandle from './extension/DragHandle'
 import { Dropcursor } from './extension/Dropcursor'
